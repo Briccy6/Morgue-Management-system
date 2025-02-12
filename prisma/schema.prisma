@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model Hospital {
+  id        String      @id @default(uuid())
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String      @unique
+  mortality Mortality[]
+}
+
+model Mortality {
+  id           String              @id @default(uuid())
+  nid          String              @unique
+  firstName    String
+  lastName     String
+  location     String
+  dob          DateTime
+  diedOn       DateTime
+  registeredOn DateTime            @default(now())
+  status       MortalityStatusEnum @default(UNCLAIMED)
+  hospitalId   String
+  hospital     Hospital            @relation(fields: [hospitalId], references: [id])
+  claim        Claim?
+}
+
+model Relative {
+  id     String  @id @default(uuid())
+  nid    String
+  tel    String
+  user   User    @relation(fields: [userId], references: [id])
+  userId String  @unique
+  claim  Claim[]
+}
+
+model Claim {
+  id           String    @id @default(uuid())
+  amount       Float
+  method       String
+  paidAt       DateTime
+  pickUpDate   DateTime
+  relationship String
+  relativeId   String
+  relative     Relative  @relation(fields: [relativeId], references: [id])
+  mortalityId  String    @unique
+  mortality    Mortality @relation(fields: [mortalityId], references: [id])
+}
+
+model User {
+  id       String       @id @default(uuid())
+  names    String
+  email    String       @unique
+  password String
+  role     UserRoleEnum
+  location String
+  hospital Hospital?
+  relative Relative?
+}
+
+// ENUM
+
+enum MortalityStatusEnum {
+  CLAIMED
+  UNCLAIMED
+  TAKEN
+}
+
+enum UserRoleEnum {
+  RELATIVE
+  HOSPITAL
+  ADMIN
+}
