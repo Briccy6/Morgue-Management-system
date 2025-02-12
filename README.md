@@ -4,8 +4,6 @@ Final year project for managing morgue activities, and making easy for relative 
 ## Hosted link
 [https://morgue-management-system.vercel.app/](https://morgue-management-system.vercel.app/)
 
-## ENV
-- DATABASE_URL="postgresql://username:password@host:PORT-NUMBER/DB_NAME?sslmode=verify-full"
 
 ## PAGES
 
